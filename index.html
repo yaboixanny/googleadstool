@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Ads AI Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-glow"></div>
+    <main class="container">
+        <header>
+            <h1>Ads<span class="highlight">Genio</span></h1>
+            <p>One-shot high-converting Google Ads copy instantly.</p>
+        </header>
+
+        <section class="generator-panel glass-panel">
+            <form id="ads-form">
+                <div class="input-group">
+                    <label for="business-type">Business Type</label>
+                    <input type="text" id="business-type" placeholder="e.g. Mobile Key Replacement" required>
+                </div>
+                <div class="input-group">
+                    <label for="location">LocationTarget</label>
+                    <input type="text" id="location" placeholder="e.g. Orlando, FL" required>
+                </div>
+                <button type="submit" class="btn-generate" id="generate-btn">
+                    <span class="btn-text">Generate Ad Copy</span>
+                    <span class="loader hidden"></span>
+                </button>
+            </form>
+        </section>
+
+        <section id="results-panel" class="results-panel hidden">
+            <!-- Headlines -->
+            <div class="result-card glass-panel fade-in">
+                <div class="card-header">
+                    <h2>Headlines</h2>
+                    <span class="badge">Max 30 chars</span>
+                </div>
+                <ul id="headlines-list" class="copy-list"></ul>
+            </div>
+
+            <!-- Descriptions -->
+            <div class="result-card glass-panel fade-in delay-1">
+                <div class="card-header">
+                    <h2>Descriptions</h2>
+                    <span class="badge">Max 90 chars</span>
+                </div>
+                <ul id="descriptions-list" class="copy-list"></ul>
+            </div>
+
+            <!-- Callout Extensions -->
+            <div class="result-card glass-panel fade-in delay-2">
+                <div class="card-header">
+                    <h2>Callout Extensions</h2>
+                    <span class="badge">Max 25 chars</span>
+                </div>
+                <ul id="callouts-list" class="copy-list"></ul>
+            </div>
+
+            <!-- Sitelink Extensions -->
+            <div class="result-card glass-panel fade-in delay-3">
+                <div class="card-header">
+                    <h2>Sitelink Extensions</h2>
+                    <span class="badge">Text: 25 | Desc: 35 chars</span>
+                </div>
+                <ul id="sitelinks-list" class="sitelink-list"></ul>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
