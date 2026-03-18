@@ -63,6 +63,7 @@ h1 {
 .highlight {
     background: linear-gradient(90deg, var(--primary), var(--accent));
     -webkit-background-clip: text;
+    background-clip: text;
     color: transparent;
 }
 
@@ -89,6 +90,18 @@ form {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+    .input-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .input-group {

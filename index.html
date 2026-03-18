@@ -17,14 +17,29 @@
 
         <section class="generator-panel glass-panel">
             <form id="ads-form">
-                <div class="input-group">
-                    <label for="business-type">Business Type</label>
-                    <input type="text" id="business-type" placeholder="e.g. Mobile Key Replacement" required>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="business-type">Business Type *</label>
+                        <input type="text" id="business-type" placeholder="e.g. Mobile Key Replacement" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="location">LocationTarget *</label>
+                        <input type="text" id="location" placeholder="e.g. Orlando, FL" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="keyword">Main Keyword (Optional)</label>
+                        <input type="text" id="keyword" placeholder="e.g. Car Key Copied">
+                    </div>
+                    <div class="input-group">
+                        <label for="offer">Discount Offer (Optional)</label>
+                        <input type="text" id="offer" placeholder="e.g. $20 Off">
+                    </div>
+                    <div class="input-group" style="grid-column: 1 / -1;">
+                        <label for="usp">Unique Selling Point (Optional)</label>
+                        <input type="text" id="usp" placeholder="e.g. Same Day Service">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label for="location">LocationTarget</label>
-                    <input type="text" id="location" placeholder="e.g. Orlando, FL" required>
-                </div>
+                
                 <button type="submit" class="btn-generate" id="generate-btn">
                     <span class="btn-text">Generate Ad Copy</span>
                     <span class="loader hidden"></span>

@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const calloutsList = document.getElementById('callouts-list');
     const sitelinksList = document.getElementById('sitelinks-list');
 
-    // Utility mapping for length checks
+    // Utility mapping for character limits
     const LIMITS = {
         headline: 30,
         description: 90,
@@ -19,78 +19,135 @@ document.addEventListener('DOMContentLoaded', () => {
         sitelinkDesc: 35
     };
 
-    // Helper to truncate safely without cutting words in half if possible
-    function truncate(str, limit) {
-        if (str.length <= limit) return str;
-        return str.substring(0, limit - 3).trim() + "...";
-    }
+    // Advanced Generator Engine
+    function generateDynamicCopy(bType, loc, keyword, offer, usp) {
+        // Clean inputs
+        bType = bType.trim();
+        loc = loc.trim();
+        keyword = keyword.trim() || bType; // Fallback to bType if no keyword provided
+        offer = offer.trim();
+        usp = usp.trim();
 
-    // Template generator (acts as placeholder for actual LLM/AI logic)
-    function generateAdCopy(businessType, location) {
-        // Mock some slight artificial delay for effect
+        // Synonym Sets
+        const prefixes = ["Best", "Top", "Expert", "#1", "Local", "Pro", "Reliable", "Trusted"];
+        const actions = ["Call", "Get", "Book", "Find", "Hire", "Need"];
+        const urgency = ["Now", "Today", "ASAP", "Fast"];
+        const qualities = ["Affordable", "Fast & Reliable", "Professional", "Guaranteed", "Certified"];
+        
+        // Helper to validate and shuffle arrays
+        const shuffle = (array) => [...array].sort(() => 0.5 - Math.random());
+        
+        // Helper to evaluate a template. If it fits, return string. If not, return null.
+        const validate = (str, limit) => {
+            const clean = str.replace(/\s+/g, ' ').trim();
+            return clean.length > 0 && clean.length <= limit ? clean : null;
+        };
+
+        // Headlines Collection (Max 30 chars)
+        const possibleHeadlines = [];
+        
+        // Strategy 1: Location + Business Type
+        prefixes.forEach(p => possibleHeadlines.push(`${p} ${keyword} in ${loc}`));
+        prefixes.forEach(p => possibleHeadlines.push(`${loc}'s ${p} ${bType}`));
+        
+        // Strategy 2: Actions & Urgency
+        actions.forEach(a => possibleHeadlines.push(`${a} A ${bType} ${urgency[0]}`));
+        possibleHeadlines.push(`Need a ${bType}? Call Now`);
+        possibleHeadlines.push(`Find a ${bType} in ${loc}`);
+        
+        // Strategy 3: Offer & USP (if provided)
+        if (offer) {
+            possibleHeadlines.push(`${offer} On ${bType}`);
+            possibleHeadlines.push(`Get ${offer} Today`);
+            possibleHeadlines.push(`Claim ${offer} Now`);
+        }
+        if (usp) {
+            possibleHeadlines.push(`${usp} - ${bType}`);
+            possibleHeadlines.push(usp);
+        }
+        
+        // Strategy 4: High Converting Generic
+        qualities.forEach(q => possibleHeadlines.push(`${q} ${bType}`));
+        possibleHeadlines.push(`100% Satisfaction Guarantee`);
+        possibleHeadlines.push(`Locally Owned & Operated`);
+        possibleHeadlines.push(`Highly Rated in ${loc}`);
+        
+        // Filter valid headlines and keep unique
+        const validHeadlines = [...new Set(possibleHeadlines.map(h => validate(h, LIMITS.headline)).filter(Boolean))];
+        const finalHeadlines = shuffle(validHeadlines).slice(0, 15);
+
+        // Descriptions Collection (Max 90 chars)
+        const possibleDescriptions = [];
+        possibleDescriptions.push(`Looking for a reliable ${bType} in ${loc}? We offer fast, professional, and affordable services.`);
+        possibleDescriptions.push(`Don't wait! Our expert ${keyword} team in ${loc} is ready to help you with your needs today.`);
+        possibleDescriptions.push(`Top-rated ${bType} services in ${loc}. We guarantee 100% satisfaction on every single job.`);
+        possibleDescriptions.push(`Get the best ${keyword} near you! Quality workmanship, upfront pricing, and local experts.`);
+        
+        if (offer) {
+            possibleDescriptions.push(`Take advantage of our ${offer} on all ${bType} services in ${loc}. Book your appointment today!`);
+            possibleDescriptions.push(`Call now and get ${offer}! The most trusted ${keyword} experts serving the entire ${loc} area.`);
+        }
+        if (usp) {
+            possibleDescriptions.push(`${usp}. When you need a ${bType} in ${loc}, we are your #1 choice for fast, reliable work.`);
+        }
+
+        const validDescriptions = [...new Set(possibleDescriptions.map(d => validate(d, LIMITS.description)).filter(Boolean))];
+        const finalDescriptions = shuffle(validDescriptions).slice(0, 4);
+
+        // Callout Extensions Collection (Max 25 chars)
+        const possibleCallouts = [
+            "Free Estimates", "Available 24/7", "Locally Owned", "Licensed & Insured",
+            "Satisfaction Guaranteed", "Fast Response Time", "Affordable Rates", 
+            "Expert Technicians", "No Hidden Fees", "5-Star Ratings"
+        ];
+        if (offer) possibleCallouts.push(offer);
+        if (usp) possibleCallouts.push(usp);
+
+        const validCallouts = [...new Set(possibleCallouts.map(c => validate(c, LIMITS.callout)).filter(Boolean))];
+        const finalCallouts = shuffle(validCallouts).slice(0, 8);
+
+        // Sitelink Extensions Collection (Title: 25, Desc1/2: 35)
+        const generateSafeSitelink = (title, d1, d2) => {
+            const safeTitle = validate(title, LIMITS.sitelinkTitle);
+            const safeD1 = validate(d1, LIMITS.sitelinkDesc);
+            const safeD2 = validate(d2, LIMITS.sitelinkDesc);
+            if(safeTitle && safeD1 && safeD2) return { title: safeTitle, desc1: safeD1, desc2: safeD2 };
+            return null;
+        };
+
+        const possibleSitelinks = [
+            generateSafeSitelink("Our Services", "See everything we offer", `Comprehensive ${keyword} solutions`),
+            generateSafeSitelink("Contact Us Today", "Get in touch right away", "We are ready to help you"),
+            generateSafeSitelink("Read Our Reviews", "See what our clients say", `5-Star rated in ${loc}`),
+            generateSafeSitelink("Get A Free Quote", "No hidden fees or costs", "Upfront transparent pricing")
+        ];
+
+        if (offer) {
+            possibleSitelinks.push(generateSafeSitelink("Special Offers", `Claim your ${offer} today`, "Limited time deals & discounts"));
+        }
+        if (usp) {
+            possibleSitelinks.push(generateSafeSitelink("Why Choose Us?", usp, "Experience the best service"));
+        }
+
+        const validSitelinks = possibleSitelinks.filter(Boolean);
+        // Deduplicate Sitelinks by Title
+        const uniqueSitelinkMap = new Map();
+        validSitelinks.forEach(sl => {
+            if(!uniqueSitelinkMap.has(sl.title)) {
+                uniqueSitelinkMap.set(sl.title, sl);
+            }
+        });
+        const finalSitelinks = shuffle(Array.from(uniqueSitelinkMap.values())).slice(0, 4);
+
         return new Promise((resolve) => {
             setTimeout(() => {
-                const bType = businessType.trim();
-                const loc = location.trim();
-
                 resolve({
-                    headlines: [
-                        truncate(`Best ${bType} in ${loc}`, LIMITS.headline),
-                        truncate(`Expert ${bType} Services`, LIMITS.headline),
-                        truncate(`${loc}'s Top ${bType}`, LIMITS.headline),
-                        truncate(`Fast, Reliable & Local`, LIMITS.headline),
-                        truncate(`Get A Free Estimate Today`, LIMITS.headline),
-                        truncate(`24/7 ${bType} Available`, LIMITS.headline),
-                        truncate(`Trusted ${bType} Experts`, LIMITS.headline),
-                        truncate(`Call Us Now For Quick Help`, LIMITS.headline),
-                        truncate(`Affordable ${bType} in ${loc}`, LIMITS.headline),
-                        truncate(`Need a ${bType}? Call Now`, LIMITS.headline),
-                        truncate(`Top Rated in ${loc}`, LIMITS.headline),
-                        truncate(`Professional ${bType}`, LIMITS.headline),
-                        truncate(`100% Satisfaction Guarantee`, LIMITS.headline),
-                        truncate(`Locally Owned & Operated`, LIMITS.headline),
-                        truncate(`Book Your Appointment Today`, LIMITS.headline)
-                    ],
-                    descriptions: [
-                        truncate(`Looking for a reliable ${bType} in ${loc}? We offer fast, professional, and affordable services.`, LIMITS.description),
-                        truncate(`Don't wait! Our expert ${bType} team in ${loc} is ready to help you with your needs today.`, LIMITS.description),
-                        truncate(`Top-rated ${bType} services in ${loc}. We guarantee 100% satisfaction on every single job.`, LIMITS.description),
-                        truncate(`Get the best ${bType} near you! Quality workmanship, upfront pricing, and local experts.`, LIMITS.description)
-                    ],
-                    callouts: [
-                        truncate(`Free Estimates`, LIMITS.callout),
-                        truncate(`Available 24/7`, LIMITS.callout),
-                        truncate(`Locally Owned`, LIMITS.callout),
-                        truncate(`Licensed & Insured`, LIMITS.callout),
-                        truncate(`Satisfaction Guaranteed`, LIMITS.callout),
-                        truncate(`Fast Response Time`, LIMITS.callout),
-                        truncate(`Affordable Rates`, LIMITS.callout),
-                        truncate(`Expert Technicians`, LIMITS.callout)
-                    ],
-                    sitelinks: [
-                        {
-                            title: truncate(`Our Services`, LIMITS.sitelinkTitle),
-                            desc1: truncate(`See everything we offer`, LIMITS.sitelinkDesc),
-                            desc2: truncate(`Comprehensive ${bType} solutions`, LIMITS.sitelinkDesc)
-                        },
-                        {
-                            title: truncate(`Contact Us Today`, LIMITS.sitelinkTitle),
-                            desc1: truncate(`Get in touch right away`, LIMITS.sitelinkDesc),
-                            desc2: truncate(`We're ready to help you`, LIMITS.sitelinkDesc)
-                        },
-                        {
-                            title: truncate(`Read Our Reviews`, LIMITS.sitelinkTitle),
-                            desc1: truncate(`See what clients say`, LIMITS.sitelinkDesc),
-                            desc2: truncate(`5-Star rated in ${loc}`, LIMITS.sitelinkDesc)
-                        },
-                        {
-                            title: truncate(`Get A Free Quote`, LIMITS.sitelinkTitle),
-                            desc1: truncate(`No hidden fees or costs`, LIMITS.sitelinkDesc),
-                            desc2: truncate(`Upfront transparent pricing`, LIMITS.sitelinkDesc)
-                        }
-                    ]
+                    headlines: finalHeadlines,
+                    descriptions: finalDescriptions,
+                    callouts: finalCallouts,
+                    sitelinks: finalSitelinks
                 });
-            }, 1500); // 1.5s delay
+            }, 800); // 800ms virtual delay for aesthetic loading effect
         });
     }
 
@@ -131,6 +188,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const bType = document.getElementById('business-type').value;
         const loc = document.getElementById('location').value;
+        const keyword = document.getElementById('keyword').value;
+        const offer = document.getElementById('offer').value;
+        const usp = document.getElementById('usp').value;
 
         if (!bType || !loc) return;
 
@@ -143,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsPanel.classList.add('hidden');
 
         try {
-            const data = await generateAdCopy(bType, loc);
+            const data = await generateDynamicCopy(bType, loc, keyword, offer, usp);
             
             // Render results
             renderList(headlinesList, data.headlines);
@@ -172,5 +232,4 @@ document.addEventListener('DOMContentLoaded', () => {
             generateBtn.disabled = false;
         }
     });
-
 });
