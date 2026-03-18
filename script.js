@@ -9,6 +9,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const descriptionsList = document.getElementById('descriptions-list');
     const calloutsList = document.getElementById('callouts-list');
     const sitelinksList = document.getElementById('sitelinks-list');
+    
+    const logo = document.getElementById('logo');
+    
+    // Reset page functionality
+    logo.addEventListener('click', () => {
+        form.reset();
+        resultsPanel.classList.add('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 
     // Utility mapping for character limits
     const LIMITS = {
