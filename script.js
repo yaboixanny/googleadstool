@@ -87,20 +87,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Descriptions Collection (Max 90 chars)
         const possibleDescriptions = [];
-        possibleDescriptions.push(`Looking for a reliable ${bType} in ${loc}? We offer fast, professional, and affordable services.`);
-        possibleDescriptions.push(`Don't wait! Our expert ${keyword} team in ${loc} is ready to help you with your needs today.`);
-        possibleDescriptions.push(`Top-rated ${bType} services in ${loc}. We guarantee 100% satisfaction on every single job.`);
-        possibleDescriptions.push(`Get the best ${keyword} near you! Quality workmanship, upfront pricing, and local experts.`);
+        
+        // Much shorter base options to accommodate long bType/loc injected strings
+        possibleDescriptions.push(`Need a ${bType} in ${loc}? Call our experts today.`);
+        possibleDescriptions.push(`Top ${keyword} in ${loc}. 100% Satisfaction Guaranteed. Get a quote!`);
+        possibleDescriptions.push(`Expert ${bType} services in ${loc}. Fast response & low prices.`);
+        possibleDescriptions.push(`Local ${keyword} experts serving ${loc}. Free estimates!`);
         
         if (offer) {
-            possibleDescriptions.push(`Take advantage of our ${offer} on all ${bType} services in ${loc}. Book your appointment today!`);
-            possibleDescriptions.push(`Call now and get ${offer}! The most trusted ${keyword} experts serving the entire ${loc} area.`);
+            possibleDescriptions.push(`Get ${offer} on ${bType} in ${loc}. Book today!`);
+            possibleDescriptions.push(`Call now for ${offer}! Most trusted ${keyword} in town.`);
         }
         if (usp) {
-            possibleDescriptions.push(`${usp}. When you need a ${bType} in ${loc}, we are your #1 choice for fast, reliable work.`);
+            possibleDescriptions.push(`${usp}. Your #1 choice for ${bType} in ${loc}.`);
+            possibleDescriptions.push(`Expert ${keyword}. ${usp}.`);
         }
 
-        const validDescriptions = [...new Set(possibleDescriptions.map(d => validate(d, LIMITS.description)).filter(Boolean))];
+        // Absolute Fallbacks without location to save length
+        possibleDescriptions.push(`Top rated ${bType} professionals. Call today for a free estimate!`);
+        possibleDescriptions.push(`Expert ${keyword} services. Fast, affordable, and local. Book now!`);
+        
+        // Ultra-short static fallbacks that will NEVER breach 90 characters
+        possibleDescriptions.push(`Quality services for your needs. 100% satisfaction guaranteed.`);
+        possibleDescriptions.push(`Professional, affordable & reliable experts ready to assist you.`);
+
+        let validDescriptions = [...new Set(possibleDescriptions.map(d => validate(d, LIMITS.description)).filter(Boolean))];
+        
+        // If we somehow still don't have enough, force the ultra-short static ones
+        if (validDescriptions.length < 4) {
+            validDescriptions.push(`Quality services for your needs. 100% satisfaction guaranteed.`);
+            validDescriptions.push(`Professional, affordable & reliable experts ready to assist you.`);
+            validDescriptions.push(`Contact us today for top-tier service at an unbeatable price.`);
+            validDescriptions.push(`Your local pros. Get the job done right the first time.`);
+            validDescriptions = [...new Set(validDescriptions)]; // Deduplicate again
+        }
+        
         const finalDescriptions = shuffle(validDescriptions).slice(0, 4);
 
         // Callout Extensions Collection (Max 25 chars)
@@ -125,24 +146,30 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const possibleSitelinks = [
-            generateSafeSitelink("Our Services", "See everything we offer", `Comprehensive ${keyword} solutions`),
+            generateSafeSitelink("Our Services", "See everything we offer", `Top-tier ${keyword} help`),
             generateSafeSitelink("Contact Us Today", "Get in touch right away", "We are ready to help you"),
-            generateSafeSitelink("Read Our Reviews", "See what our clients say", `5-Star rated in ${loc}`),
+            generateSafeSitelink("Read Our Reviews", "See what our clients say", `5-Star rated local experts`),
             generateSafeSitelink("Get A Free Quote", "No hidden fees or costs", "Upfront transparent pricing")
         ];
 
         if (offer) {
-            possibleSitelinks.push(generateSafeSitelink("Special Offers", `Claim your ${offer} today`, "Limited time deals & discounts"));
+            possibleSitelinks.push(generateSafeSitelink("Special Offers", `Claim your deals today`, "Limited time discounts"));
         }
         if (usp) {
-            possibleSitelinks.push(generateSafeSitelink("Why Choose Us?", usp, "Experience the best service"));
+            possibleSitelinks.push(generateSafeSitelink("Why Choose Us?", `${usp}`, "Experience the best service"));
         }
+        
+        // Static fallbacks that will ALWAYS pass the extremely strict 25 and 35 limits
+        possibleSitelinks.push({title: "View Our Services", desc1: "Quality work guaranteed", desc2: "See how we can help you"});
+        possibleSitelinks.push({title: "Contact Us Now", desc1: "Message or call us", desc2: "Fast & friendly response"});
+        possibleSitelinks.push({title: "Read Client Reviews", desc1: "Trusted by many", desc2: "5-star average rating"});
+        possibleSitelinks.push({title: "Free Estimates", desc1: "No obligation quotes", desc2: "100% transparent pricing"});
 
-        const validSitelinks = possibleSitelinks.filter(Boolean);
+        let validSitelinks = possibleSitelinks.filter(Boolean);
         // Deduplicate Sitelinks by Title
         const uniqueSitelinkMap = new Map();
         validSitelinks.forEach(sl => {
-            if(!uniqueSitelinkMap.has(sl.title)) {
+            if(!uniqueSitelinkMap.has(sl.title) && sl.title.length <= LIMITS.sitelinkTitle && sl.desc1.length <= LIMITS.sitelinkDesc && sl.desc2.length <= LIMITS.sitelinkDesc) {
                 uniqueSitelinkMap.set(sl.title, sl);
             }
         });
